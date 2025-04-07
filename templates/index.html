@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hashtag Scraper</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Font Awesome for icons -->
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: linear-gradient(135deg, #6b48ff, #00ddeb); /* Vibrant gradient */
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            transition: background 0.5s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #2b1b5e, #1e3c72); /* Dark mode gradient */
+            color: #e0e0e0;
+        }
+
+        /* Container */
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            width: 400px;
+            max-width: 90%;
+            animation: fadeIn 0.5s ease-in-out;
+            position: relative;
+        }
+
+        .dark-mode .container {
+            background: rgba(30, 30, 50, 0.95);
+            color: #e0e0e0;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Heading */
+        h1 {
+            color: #7b1fa2; /* Deep purple */
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .dark-mode h1 {
+            color: #bb86fc; /* Light purple for dark mode */
+        }
+
+        /* Form Elements */
+        label {
+            font-weight: 600;
+            color: #424242;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .dark-mode label {
+            color: #b0b0b0;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: #ff4081; /* Vibrant pink */
+            box-shadow: 0 0 8px rgba(255, 64, 129, 0.3);
+            outline: none;
+        }
+
+        .dark-mode input {
+            background: #2c2c3c;
+            border-color: #444;
+            color: #e0e0e0;
+        }
+
+        /* Button */
+        button {
+            background: linear-gradient(90deg, #ff4081, #ff6f00); /* Pink to orange gradient */
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 64, 129, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .dark-mode button {
+            background: linear-gradient(90deg, #bb86fc, #03dac6); /* Purple to teal for dark mode */
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #fff;
+            border-top: 3px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        button.loading .spinner {
+            display: inline-block;
+        }
+
+        /* Error Message */
+        p {
+            color: #ff1744; /* Bright red */
+            font-weight: 600;
+            margin: 10px 0;
+            animation: shake 0.3s ease;
+        }
+
+        .dark-mode p {
+            color: #ff8a80; /* Softer red for dark mode */
+        }
+
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #7b1fa2;
+        }
+
+        .dark-mode .dark-mode-toggle {
+            color: #bb86fc;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hashtag Scraper</h1>
+        {% if error %}
+            <p>{{ error }}</p>
+        {% endif %}
+        <form method="POST" action="/" id="scrapeForm" onsubmit="showLoading()">
+            <label for="hashtag">Enter Hashtag:</label>
+            <input type="text" id="hashtag" name="hashtag" required>
+            <button type="submit" id="submitBtn">
+                Scrape Tweets
+                <span class="spinner"></span>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.querySelector('.dark-mode-toggle i');
+            icon.classList.toggle('fa-moon');
+            icon.classList.toggle('fa-sun');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+
+        // Load Dark Mode Preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            toggleDarkMode();
+        }
+
+        // Show Loading Spinner
+        function showLoading() {
+            const button = document.getElementById('submitBtn');
+            button.classList.add('loading');
+            button.disabled = true;
+        }
+    </script>
+</body>
+</html>

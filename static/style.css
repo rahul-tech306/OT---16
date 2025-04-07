@@ -1,0 +1,92 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #f6f1e9, #d8e2dc);
+    color: #333;
+    text-align: center;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Container */
+.container {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 400px;
+}
+
+/* Heading */
+h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #5e6472;
+}
+
+/* Error Message */
+.error {
+    color: #d9534f;
+    font-size: 14px;
+}
+
+/* Form */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Input Field */
+input {
+    width: 80%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #b8c1ec;
+    margin: 10px 0;
+    font-size: 16px;
+    box-shadow: 0px 2px 5px rgba(184, 193, 236, 0.3);
+    text-align: center;
+    outline: none;
+    background: #f7f7ff;
+    color: #333;
+}
+
+input:focus {
+    box-shadow: 0px 0px 8px rgba(184, 193, 236, 0.6);
+    border-color: #9baacf;
+}
+
+/* Button */
+button {
+    background: #a8dadc;
+    color: #333;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0px 2px 5px rgba(168, 218, 220, 0.4);
+}
+
+button:hover {
+    background: #bde0fe;
+    box-shadow: 0px 4px 8px rgba(189, 224, 254, 0.6);
+}
+
+/* Responsive Tweaks */
+@media (max-width: 400px) {
+    h1 {
+        font-size: 24px;
+    }
+    input, button {
+        font-size: 14px;
+        padding: 10px;
+    }
+}
